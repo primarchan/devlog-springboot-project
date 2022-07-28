@@ -36,7 +36,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": null, \"content\": \"내용입니다.\"}"))
                 .andExpect(status().isOk())
-//                .andExpect(content().string("Hello World"))
                 .andExpect(jsonPath("$.title").value("title을 입력해주세요."))
                 .andDo(print());
     }
