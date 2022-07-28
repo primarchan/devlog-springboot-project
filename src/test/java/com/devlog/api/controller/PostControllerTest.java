@@ -35,8 +35,10 @@ class PostControllerTest {
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": null, \"content\": \"내용입니다.\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("title을 입력해주세요."))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+                .andExpect(jsonPath("$.validation.title").value("title 을 입력해주세요."))
                 .andDo(print());
     }
 
