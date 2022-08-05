@@ -19,6 +19,7 @@ public class PostController {
 
     @PostMapping("/posts")
     public Map<String, String> post(@RequestBody @Valid PostCreate params)  {
+
         return Map.of();
     }
 }
