@@ -2,6 +2,7 @@ package com.devlog.api.controller;
 
 import com.devlog.api.domain.Post;
 import com.devlog.api.request.PostCreate;
+import com.devlog.api.response.PostResponse;
 import com.devlog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +31,8 @@ public class PostController {
      * 게시글 단건 조회 API
      */
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id) {
-        Post post = postService.get(id);
-        return post;
+    public PostResponse get(@PathVariable(name = "postId") Long id) {
+        return postService.get(id);
     }
 
 }

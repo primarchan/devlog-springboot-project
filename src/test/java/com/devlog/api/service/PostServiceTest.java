@@ -3,6 +3,7 @@ package com.devlog.api.service;
 import com.devlog.api.domain.Post;
 import com.devlog.api.repository.PostRepository;
 import com.devlog.api.request.PostCreate;
+import com.devlog.api.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,13 +56,13 @@ class PostServiceTest {
         postRepository.save(requestPost);
 
         // when
-        Post post = postService.get(requestPost.getId());
+        PostResponse response = postService.get(requestPost.getId());
 
         // then
-        assertNotNull(post);
+        assertNotNull(response);
         assertEquals(1L, postRepository.count());
-        assertEquals("test2 제목입니다.", post.getTitle());
-        assertEquals("test2 내용입니다.", post.getContent());
+        assertEquals("test2 제목입니다.", response.getTitle());
+        assertEquals("test2 내용입니다.", response.getContent());
     }
 
 }
