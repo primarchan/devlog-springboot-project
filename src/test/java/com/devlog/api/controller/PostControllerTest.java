@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,8 +38,8 @@ class PostControllerTest {
     void test1() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
+                .title("test1 제목입니다.")
+                .content("test1 내용입니다.")
                 .build();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -59,7 +60,7 @@ class PostControllerTest {
         // given
         PostCreate request = PostCreate.builder()
                 .title(null)
-                .content("내용입니다.")
+                .content("test2 내용입니다.")
                 .build();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -81,8 +82,8 @@ class PostControllerTest {
     void test3() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
+                .title("test3 제목입니다.")
+                .content("test3 내용입니다.")
                 .build();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -99,10 +100,28 @@ class PostControllerTest {
         assertEquals(1L, postRepository.count());
 
         Post post = postRepository.findAll().get(0);
-        assertEquals("제목입니다.", post.getTitle());
-        assertEquals("내용입니다.", post.getContent());
+        assertEquals("test3 제목입니다.", post.getTitle());
+        assertEquals("test3 내용입니다.", post.getContent());
     }
 
+    @Test
+    @DisplayName("글 1개 조회")
+    void test4() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("test4 제목입니다.")
+                .content("test4 내용입니다.")
+                .build();
+        postRepository.save(post);
 
+        // expected(when + then)
+        mockMvc.perform(get("/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(post.getId()))
+                .andExpect(jsonPath("$.title").value("test4 제목입니다."))
+                .andExpect(jsonPath("$.content").value("test4 내용입니다."))
+                .andDo(print());
+    }
 
 }
