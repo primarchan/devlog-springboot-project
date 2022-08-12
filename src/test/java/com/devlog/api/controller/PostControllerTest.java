@@ -4,6 +4,7 @@ import com.devlog.api.domain.Post;
 import com.devlog.api.repository.PostRepository;
 import com.devlog.api.request.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,7 +79,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청 시 DB 에 값이 저장된다.")
+    @DisplayName("/posts 요청 시 DB 에 값이 저장된다. (게시글 등록/저장)")
     void test3() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
@@ -105,7 +106,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("글 1개 조회")
+    @DisplayName("게시글 단건 조회")
     void test4() throws Exception {
         // given
         Post post = Post.builder()
@@ -121,6 +122,36 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.id").value(post.getId()))
                 .andExpect(jsonPath("$.title").value("test4 제목입니다."))
                 .andExpect(jsonPath("$.content").value("test4 내용입니다."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 전체 조회")
+    void test5() throws Exception {
+        // given
+        Post post1 = postRepository.save(Post.builder()
+                        .title("test5 제목입니다.(1)")
+                        .content("test5 내용입니다.(1)")
+                        .build()
+        );
+
+        Post post2 = postRepository.save(Post.builder()
+                .title("test5 제목입니다.(2)")
+                .content("test5 내용입니다.(2)")
+                .build()
+        );
+
+        // expected(when + then)
+        mockMvc.perform(get("/posts")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Matchers.is(2)))
+                .andExpect(jsonPath("$[0].id").value(post1.getId()))
+                .andExpect(jsonPath("$[0].title").value("test5 제목입니다.(1)"))
+                .andExpect(jsonPath("$[0].content").value("test5 내용입니다.(1)"))
+                .andExpect(jsonPath("$[1].id").value(post2.getId()))
+                .andExpect(jsonPath("$[1].title").value("test5 제목입니다.(2)"))
+                .andExpect(jsonPath("$[1].content").value("test5 내용입니다.(2)"))
                 .andDo(print());
     }
 

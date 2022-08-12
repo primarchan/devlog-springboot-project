@@ -1,6 +1,5 @@
 package com.devlog.api.controller;
 
-import com.devlog.api.domain.Post;
 import com.devlog.api.request.PostCreate;
 import com.devlog.api.response.PostResponse;
 import com.devlog.api.service.PostService;
@@ -9,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -29,10 +28,20 @@ public class PostController {
 
     /**
      * 게시글 단건 조회 API
+     * @param postId
+     * @return PostResponse
      */
     @GetMapping("/posts/{postId}")
-    public PostResponse get(@PathVariable(name = "postId") Long id) {
-        return postService.get(id);
+    public PostResponse get(@PathVariable Long postId) {
+        return postService.get(postId);
     }
+
+    @GetMapping("/posts")
+    public List<PostResponse> getList() {
+        return postService.getList();
+    }
+
+
+
 
 }
