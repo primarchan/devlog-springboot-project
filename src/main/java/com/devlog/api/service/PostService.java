@@ -6,6 +6,7 @@ import com.devlog.api.request.PostCreate;
 import com.devlog.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +38,9 @@ public class PostService {
                 .build();
     }
 
-    public List<PostResponse> getList() {
+    public List<PostResponse> getList(Pageable pageable) {
 
-        return postRepository.findAll().stream()
+        return postRepository.findAll(pageable).stream()
 //                .map(post -> new PostResponse(post))
                 .map(PostResponse::new)
                 .collect(Collectors.toList());

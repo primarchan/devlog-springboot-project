@@ -4,7 +4,6 @@ import com.devlog.api.domain.Post;
 import com.devlog.api.repository.PostRepository;
 import com.devlog.api.request.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -129,29 +132,23 @@ class PostControllerTest {
     @DisplayName("게시글 전체 조회")
     void test5() throws Exception {
         // given
-        Post post1 = postRepository.save(Post.builder()
-                        .title("test5 제목입니다.(1)")
-                        .content("test5 내용입니다.(1)")
-                        .build()
-        );
+        List<Post> requestPosts = IntStream.range(1, 31)
+                .mapToObj(i -> {
+                    return Post.builder()
+                            .title("데브로그 제목 " + i)
+                            .content("서울 " + i)
+                            .build();
+                }).collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
 
-        Post post2 = postRepository.save(Post.builder()
-                .title("test5 제목입니다.(2)")
-                .content("test5 내용입니다.(2)")
-                .build()
-        );
-
-        // expected(when + then)
-        mockMvc.perform(get("/posts")
+        // expected
+        mockMvc.perform(get("/posts?page=1&sort=id,desc")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Matchers.is(2)))
-                .andExpect(jsonPath("$[0].id").value(post1.getId()))
-                .andExpect(jsonPath("$[0].title").value("test5 제목입니다.(1)"))
-                .andExpect(jsonPath("$[0].content").value("test5 내용입니다.(1)"))
-                .andExpect(jsonPath("$[1].id").value(post2.getId()))
-                .andExpect(jsonPath("$[1].title").value("test5 제목입니다.(2)"))
-                .andExpect(jsonPath("$[1].content").value("test5 내용입니다.(2)"))
+                .andExpect(jsonPath("$.length()").value(5))
+                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].title").value("데브로그 제목 30"))
+                .andExpect(jsonPath("$[0].content").value("서울 30"))
                 .andDo(print());
     }
 

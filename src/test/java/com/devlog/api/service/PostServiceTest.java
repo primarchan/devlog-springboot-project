@@ -9,10 +9,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 @SpringBootTest
 class PostServiceTest {
 
@@ -68,26 +75,28 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 전체 조회")
+    @DisplayName("글 1페이지 내림차순 조회")
     void Test3() {
         // given
-        postRepository.saveAll(List.of(
-                Post.builder()
-                        .title("test3 제목입니다.(1)")
-                        .content("test3 내용입니다.(1)")
-                        .build(),
-                Post.builder()
-                        .title("test3 제목입니다.(2)")
-                        .content("test3 내용입니다.(2)")
-                        .build()
-        ));
+        List<Post> requestPosts = IntStream.range(1, 31)
+                        .mapToObj(i -> {
+                            return Post.builder()
+                                    .title("데브로그 제목 " + i)
+                                    .content("서울 " + i)
+                                    .build();
+                        }).collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
+
+        Pageable pageable = PageRequest.of(0, 5, DESC, "id");
 
         // when
-        List<PostResponse> posts = postService.getList();
+        List<PostResponse> posts = postService.getList(pageable);
 
         // then
-        assertEquals(2L, posts.size());
+        // assertEquals(2L, posts.size());
+        assertEquals(5l, posts.size());
+        assertEquals("데브로그 제목 30", posts.get(0).getTitle());
+        assertEquals("데브로그 제목 26", posts.get(4).getTitle());
     }
-
 
 }
