@@ -6,6 +6,7 @@ import com.devlog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     /**
-     * 게시글 등록 API
+     * @apiNote 게시글 등록 API
      * @param request
      */
     @PostMapping("/posts")
@@ -28,7 +29,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 단건 조회 API
+     * @apiNote 게시글 단건 조회 API
      * @param postId
      * @return PostResponse
      */
@@ -37,8 +38,13 @@ public class PostController {
         return postService.get(postId);
     }
 
+    /**
+     * @apiNote 게시글 전체 조회 API (페이징 처리)
+     * @param pageable
+     * @return
+     */
     @GetMapping("/posts")
-    public List<PostResponse> getList(Pageable pageable) {
+    public List<PostResponse> getList(@PageableDefault Pageable pageable) {
         return postService.getList(pageable);
     }
 
