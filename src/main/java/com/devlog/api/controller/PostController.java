@@ -1,12 +1,11 @@
 package com.devlog.api.controller;
 
 import com.devlog.api.request.PostCreate;
+import com.devlog.api.request.PostSearch;
 import com.devlog.api.response.PostResponse;
 import com.devlog.api.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -40,12 +39,12 @@ public class PostController {
 
     /**
      * @apiNote 게시글 전체 조회 API (페이징 처리)
-     * @param pageable
+     * @param postSearch
      * @return
      */
     @GetMapping("/posts")
-    public List<PostResponse> getList(@PageableDefault Pageable pageable) {
-        return postService.getList(pageable);
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
+        return postService.getList(postSearch);
     }
 
 }

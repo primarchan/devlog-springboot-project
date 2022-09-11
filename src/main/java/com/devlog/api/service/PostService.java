@@ -3,10 +3,10 @@ package com.devlog.api.service;
 import com.devlog.api.domain.Post;
 import com.devlog.api.repository.PostRepository;
 import com.devlog.api.request.PostCreate;
+import com.devlog.api.request.PostSearch;
 import com.devlog.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,10 +38,15 @@ public class PostService {
                 .build();
     }
 
-    public List<PostResponse> getList(Pageable pageable) {
+    public List<PostResponse> getList(PostSearch postSearch) {
+        /*
+        return postRepository.getList(1).stream()
+                // .map(post -> new PostResponse(post))
+                .map(PostResponse::new)
+                .collect(Collectors.toList());
 
-        return postRepository.findAll(pageable).stream()
-//                .map(post -> new PostResponse(post))
+         */
+        return postRepository.getList(postSearch).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
     }
