@@ -1,6 +1,7 @@
 package com.devlog.api.service;
 
 import com.devlog.api.domain.Post;
+import com.devlog.api.exception.PostNotFound;
 import com.devlog.api.repository.PostRepository;
 import com.devlog.api.request.PostCreate;
 import com.devlog.api.request.PostEdit;
@@ -17,8 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostServiceTest {
@@ -35,7 +35,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 작성")
+    @DisplayName("게시글 작성")
     void test1() {
         // given
         PostCreate postCreate = PostCreate.builder()
@@ -55,7 +55,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 1개 조회")
+    @DisplayName("게시글 1개 조회")
     void test2() {
         // given
         Post requestPost = Post.builder()
@@ -75,7 +75,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 1페이지 내림차순 조회")
+    @DisplayName("게시글 1페이지 내림차순 조회")
     void test3() {
         // given
         List<Post> requestPosts = IntStream.range(0, 20)
@@ -107,7 +107,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 제목 수정")
+    @DisplayName("게시글 제목 수정")
     void test4() {
         // given
         Post post = Post.builder()
@@ -127,14 +127,14 @@ class PostServiceTest {
 
         // then
         Post changedPost = postRepository.findById(post.getId())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 글입니다. id: " + post.getId()));
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 게시글입니다. id: " + post.getId()));
 
         assertEquals("수정된 제목", changedPost.getTitle());
         assertEquals("내용입니다.", changedPost.getContent());
     }
 
     @Test
-    @DisplayName("글 내용 수정")
+    @DisplayName("게시글 내용 수정")
     void test5() {
         // given
         Post post = Post.builder()
@@ -154,7 +154,7 @@ class PostServiceTest {
 
         // then
         Post changedPost = postRepository.findById(post.getId())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 글입니다. id: " + post.getId()));
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 게시글입니다. id: " + post.getId()));
 
         assertEquals("제목", changedPost.getTitle());
         assertEquals("수정된 내용입니다.", changedPost.getContent());
@@ -176,8 +176,60 @@ class PostServiceTest {
 
         // then
         assertEquals(0, postRepository.count());
+    }
+
+    @Test
+    @DisplayName("게시글 1개 조회 - (예외처리)존재하지 않는 게시글")
+    void test7() {
+        // given
+        Post post = Post.builder()
+                .title("test7 제목")
+                .content("test7 내용입니다.")
+                .build();
+        postRepository.save(post);
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.get(post.getId() + 1L);
+        });
+    }
+
+    @Test
+    @DisplayName("게시글 수정 - (예외처리)존재하지 않는 게시글")
+    void test8() {
+        // given
+        Post post = Post.builder()
+                .title("test8 제목")
+                .content("test8 내용입니다.")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("test8 제목")
+                .content("test8 수정된 내용입니다.")
+                .build();
 
 
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.edit(post.getId() + 1L, postEdit);
+        });
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 - (예외처리)존재하지 않는 게시글")
+    void test9() {
+        // given
+        Post post = Post.builder()
+                .title("test9 제목")
+                .content("test9 내용입니다.")
+                .build();
+        postRepository.save(post);
+
+        // expected
+        assertThrows(PostNotFound.class, () -> {
+            postService.delete(post.getId() + 1L);
+        });
     }
 
 }
