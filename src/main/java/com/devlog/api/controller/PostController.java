@@ -48,8 +48,23 @@ public class PostController {
         return postService.getList(postSearch);
     }
 
+    /**
+     * @apiNote 게시글 수정 API
+     * @param postId
+     * @param request
+     */
     @PatchMapping("/posts/{postId}")
     public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
         postService.edit(postId, request);
     }
+
+    /**
+     * @apiNote 게시글 삭제 API
+     * @param postId
+     */
+    @DeleteMapping("/posts/{postId}")
+    public void delete(@PathVariable Long postId) {
+        postService.delete(postId);
+    }
+
 }
