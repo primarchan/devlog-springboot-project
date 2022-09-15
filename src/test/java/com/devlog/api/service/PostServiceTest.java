@@ -3,8 +3,10 @@ package com.devlog.api.service;
 import com.devlog.api.domain.Post;
 import com.devlog.api.repository.PostRepository;
 import com.devlog.api.request.PostCreate;
+import com.devlog.api.request.PostEdit;
 import com.devlog.api.request.PostSearch;
 import com.devlog.api.response.PostResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -102,6 +104,60 @@ class PostServiceTest {
         assertEquals(10l, posts.size());
         assertEquals("데브로그 제목 19", posts.get(0).getTitle());
 //        assertEquals("데브로그 제목 26", posts.get(4).getTitle());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void Test4() {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용입니다.")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("수정된 제목")
+                .content("내용입니다.")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 글입니다. id: " + post.getId()));
+
+        Assertions.assertEquals("수정된 제목", changedPost.getTitle());
+        Assertions.assertEquals("내용입니다.", changedPost.getContent());
+    }
+
+    @Test
+    @DisplayName("글 내용 수정")
+    void Test5() {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용입니다.")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목")
+                .content("수정된 내용입니다.")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 글입니다. id: " + post.getId()));
+
+        Assertions.assertEquals("제목", changedPost.getTitle());
+        Assertions.assertEquals("수정된 내용입니다.", changedPost.getContent());
     }
 
 }

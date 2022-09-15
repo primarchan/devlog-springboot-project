@@ -1,14 +1,17 @@
 package com.devlog.api.service;
 
 import com.devlog.api.domain.Post;
+import com.devlog.api.domain.PostEditor;
 import com.devlog.api.repository.PostRepository;
 import com.devlog.api.request.PostCreate;
+import com.devlog.api.request.PostEdit;
 import com.devlog.api.request.PostSearch;
 import com.devlog.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,4 +53,19 @@ public class PostService {
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void edit(Long id, PostEdit postEdit) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+
+        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+
+        post.edit(postEditor);
+    }
+
 }

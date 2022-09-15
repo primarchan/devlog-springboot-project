@@ -1,6 +1,7 @@
 package com.devlog.api.controller;
 
 import com.devlog.api.request.PostCreate;
+import com.devlog.api.request.PostEdit;
 import com.devlog.api.request.PostSearch;
 import com.devlog.api.response.PostResponse;
 import com.devlog.api.service.PostService;
@@ -47,4 +48,8 @@ public class PostController {
         return postService.getList(postSearch);
     }
 
+    @PatchMapping("/posts/{postId}")
+    public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
+        postService.edit(postId, request);
+    }
 }
