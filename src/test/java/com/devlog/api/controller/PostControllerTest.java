@@ -60,7 +60,7 @@ class PostControllerTest {
                 .andDo(print());
     }
 
-    @Test
+    // @Test
     @DisplayName("/posts 요청 시 title 값은 필수다.")
     void test2() throws Exception {
         // given
@@ -246,6 +246,26 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
                 .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 작성시 제목에 (규정에 맞지 않는 내용)은 포함될 수 없다.")
+    void test11() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("test11 (규정에 맞지 않는 내용) 제목입니다.")
+                .content("test11 내용입니다.")
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
