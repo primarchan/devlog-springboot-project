@@ -28,14 +28,21 @@ public class Post {
         this.content = content;
     }
 
-    public PostEditor.PostEditorBuilder toEditor() {
-        return PostEditor.builder()
-                .title(title)
-                .content(content);
+    public void edit(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
-    public void edit(PostEditor postEditor) {
-        title = postEditor.getTitle();
-        content = postEditor.getContent();
-    }
+//    public PostEditor.PostEditorBuilder toEditor() {
+//        return PostEditor.builder()
+//                .title(title)
+//                .content(content);
+//    }
+
+
+//    public void edit(PostEditor postEditor) {
+//        title = postEditor.getTitle();
+//        content = postEditor.getContent();
+//    }
+
 }

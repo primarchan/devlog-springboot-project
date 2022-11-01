@@ -61,13 +61,15 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFound::new);
 
-        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+//        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
 
-        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
-                .content(postEdit.getContent())
-                .build();
+//        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
+//                .content(postEdit.getContent())
+//                .build();
 
-        post.edit(postEditor);
+//        post.edit(postEditor);
+
+        post.edit(postEdit.getTitle(), postEdit.getContent());
     }
 
     public void delete(Long id) {
